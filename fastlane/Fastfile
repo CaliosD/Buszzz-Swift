@@ -1,0 +1,107 @@
+# Customise this file, documentation can be found here:
+# https://github.com/fastlane/fastlane/tree/master/fastlane/docs
+# All available actions: https://docs.fastlane.tools/actions
+# can also be listed using the `fastlane actions` command
+
+# Change the syntax highlighting to Ruby
+# All lines starting with a # are ignored when running `fastlane`
+
+# If you want to automatically update fastlane if a new version is available:
+# update_fastlane
+
+# This is the minimum version number required.
+# Update this, if you use features of a newer version
+fastlane_version "2.30.2"
+default_platform :ios
+
+SCHEME_NAME='Buszzz'
+
+APP_IDENTIFIER_BETA='com.calios.buszzz'
+CODESIGN_IDENTIFIER_BETA='iPhone Distribution: BEIJING SIHETIANDI SCIENCE AND TECHNOLOGY CO., LTD.'
+
+APP_IDENTIFIER_APPSTORE='com.caliosd.buszzz'
+CODESIGN_IDENTIFIER_APPSTORE='iPhone Distribution: Yixin Zhang'
+
+FIR_USER_TOKEN='6eb4dd215709b87f9f888d5108187b12'
+FIR_APP_ID='58d0f409548b7a1c04000102'
+
+FTP_HOST='192.168.1.225'
+FTP_USERNAME='mobile'
+FTP_PASSWORD='mobile'
+FTP_PATH='/yyjxasset_res/clientsoft/'
+
+RUN_EVN=''
+
+
+platform :ios do
+  before_all do
+    # cocoapods
+  end
+
+  desc "Deploy a new version to ftp for testing."
+  lane :test do
+    RUN_EVN='test'
+    build_for_company
+
+    upload_to_ftp
+  end
+
+
+  desc "Submit a new beta Build to Fir.im."
+  lane :beta do
+    RUN_EVN='beta'
+
+    build_for_company
+
+    upload_to_fir
+  end
+
+  desc "Deploy a new version to the App Store."
+  lane :appstore do
+    snapshot
+    deliver
+    increment_build_number
+    gym
+    appstore
+  end
+
+  desc "Upload ipa to FTP."
+  lane :upload_to_ftp do
+    Dir.chdir("../builds/#{RUN_EVN}/") do 
+      # While, port 550 for ftp is not opened. =_=
+      sh "ipa distribute:ftp --host #{FTP_HOST} -u #{FTP_USERNAME} -p #{FTP_PASSWORD} -P #{FTP_PATH} -f #{SCHEME_NAME}.ipa"
+    end
+  end
+
+  desc "Upload ipa to fir.im."
+  lane :upload_to_fir do
+    # Issue of shenzhen: https://github.com/nomad/shenzhen/issues/343. =_=
+    # sh "ipa distribute:fir -u #{FIR_USER_TOKEN} -a #{FIR_APP_ID}"
+    # Or else, you can use fir-cli to realize it. (https://github.com/FIRHQ/fir-cli/blob/master/doc/publish.md)
+    Dir.chdir("../builds/#{RUN_EVN}/") do 
+      ipa="#{SCHEME_NAME}.ipa"
+      if File.exist?(ipa)
+        sh "fir login #{FIR_USER_TOKEN}"
+        sh "fir publish #{ipa}"
+      end      
+    end
+  end
+
+  desc "Build with company apple id."
+  lane :build_for_company do
+      changelog_from_git_commits  # this will generate the changelog based on your last commits
+      update_info_plist(app_identifier: "#{APP_IDENTIFIER_BETA}",
+                        scheme:"#{SCHEME_NAME}")
+      gym(scheme:"#{SCHEME_NAME}",
+          export_method:"enterprise",
+          clean:true,        
+          codesigning_identity:"#{CODESIGN_IDENTIFIER_BETA}",
+          output_directory:"./builds/#{RUN_EVN}/",
+          output_name:"#{SCHEME_NAME}.ipa"
+          )
+  end
+
+  error do |lane, exception|
+
+  end
+end

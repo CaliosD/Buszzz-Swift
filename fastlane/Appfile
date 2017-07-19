@@ -1,0 +1,19 @@
+# app_identifier "com.caliosd.buszzz" # The bundle identifier of your app
+# apple_id "995967851@qq.com" # Your Apple email address
+
+# team_id "N9K6HVRBSX" # Developer Portal Team ID
+
+# you can even provide different app identifiers, Apple IDs and team names per lane:
+# More information: https://github.com/fastlane/fastlane/blob/master/fastlane/docs/Appfile.md
+
+for_lane :beta, :test do
+	app_identifier			"com.calios.buszzz"
+	apple_dev_portal_id		"mobile@shtdtech.com"	# Apple Developer Account
+	team_id 				"JM4ZHDW47L"
+end
+
+for_lane :appstore do
+	app_identifier			"com.caliosd.buszzz"
+	apple_dev_portal_id		"995967851@qq.com"	# Apple Developer Account
+	team_id 				"N9K6HVRBSX"
+end

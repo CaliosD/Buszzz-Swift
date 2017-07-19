@@ -1,0 +1,10 @@
+.DS_Store
+*.swp
+*.pbxuser
+*.mobileprovision
+*.cer
+*.xcworkspace/
+xcuserdata/
+
+Pods/
+build/

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="fastlane.lanes">
+    
+    
+    
+      
+      <testcase classname="fastlane.lanes" name="0: Verifying required fastlane version" time="0.0013">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="1: default_platform" time="0.00096">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="2: Switch to ios upload_to_fir lane" time="0.000914">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="3: fir login 6eb4dd215709b87f9f888d5108187b12" time="1.563664">
+        
+      </testcase>
+    
+      
+      <testcase classname="fastlane.lanes" name="4: fir publish Buszzz.ipa" time="33.641427">
+        
+      </testcase>
+    
+  </testsuite>
+</testsuites>
